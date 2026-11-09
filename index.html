@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#f6f7f8" />
+  <title>ROUNDHOUSE — Combat Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <canvas id="arena" aria-label="Combat training arena"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Roundhouse home"><span class="brand-mark">R</span><span>ROUNDHOUSE<small>COMBAT LAB / 01</small></span></a>
+      <div class="session-pill"><span class="live-dot"></span> TRAINING SESSION <span class="divider">/</span> <b>FREE SPAR</b></div>
+      <button class="sound-button" id="resetBtn" title="Reset session"><span>↻</span><span class="reset-label">RESET</span></button>
+    </header>
+    <section class="hud" aria-label="Player status">
+      <div class="hud-heading"><span>PLAYER STATUS</span><span class="hud-id">ID&nbsp; 001</span></div>
+      <div class="meter health-meter"><div class="meter-title"><span><i class="icon-heart">♥</i> HEALTH</span><strong id="hpText">100 <small>/ 100</small></strong></div><div class="track"><div class="fill hp-fill" id="hpFill"></div></div></div>
+      <div class="meter"><div class="meter-title"><span><i class="icon-stamina">ϟ</i> STAMINA</span><strong id="staminaText">90 <small>/ 90</small></strong></div><div class="track"><div class="fill stamina-fill" id="staminaFill"></div></div></div>
+      <div class="meter"><div class="meter-title"><span><i class="icon-food">◒</i> HUNGER</span><strong id="hungerText">80 <small>/ 80</small></strong></div><div class="track"><div class="fill hunger-fill" id="hungerFill"></div></div></div>
+      <div class="status-foot"><span class="status-pip"></span><span id="statusText">READY TO SPAR</span></div>
+    </section>
+    <section class="dummy-card">
+      <div class="dummy-head"><div><span class="eyebrow">TRAINING PARTNER</span><h2>Practice Dummy <span class="dummy-level">LV. 01</span></h2></div><div class="dummy-icon">✳</div></div>
+      <div class="dummy-health-row"><span>INTEGRITY</span><b id="dummyHpText">100 <small>/ 100</small></b></div>
+      <div class="track dummy-track"><div class="fill dummy-fill" id="dummyHpFill"></div></div>
+      <div class="dummy-state"><span class="state-dot" id="dummyDot"></span><span id="dummyState">ACTIVE · COUNTERING</span></div>
+    </section>
+    <div class="arena-label"><span class="crosshair">＋</span><span>OPEN FLOOR</span><span class="arena-line"></span><span>RANGE <b id="rangeText">3.2M</b></span></div>
+    <div class="combo-toast" id="comboToast"><span class="toast-kicker">COMBO STRING 01</span><strong>LAUNCH</strong><small>UPPER BODY IMPACT</small></div>
+    <div class="impact-label" id="impactLabel">CLEAN HIT</div>
+    <aside class="tips-card"><span class="tips-icon">⌁</span><span><b>Slip a strike</b> to open a 0.2s heavy window.</span></aside>
+    <footer class="bottom-ui">
+      <div class="controls-legend">
+        <div class="move-help"><span class="key-group"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><span>MOVE</span></div>
+        <div><kbd>SHIFT</kbd><span>SPRINT</span></div>
+        <div><kbd>SPACE</kbd><span>DODGE</span></div>
+      </div>
+      <div class="action-bar">
+        <button class="action-button light" id="lightBtn"><span class="action-key">M1</span><span class="action-copy"><b>QUICK PUNCH</b><small>4–6 DMG</small></span><span class="action-arrow">↗</span></button>
+        <button class="action-button heavy" id="heavyBtn"><span class="action-key">M2</span><span class="action-copy"><b>HEAVY STRIKE</b><small>10–14 DMG</small></span><span class="action-arrow">↗</span></button>
+      </div>
+      <div class="mouse-tip"><span class="mouse-icon">⌖</span> CLICK TO STRIKE</div>
+    </footer>
+    <div class="mobile-controls" aria-label="Touch controls">
+      <div class="touch-move"><button data-move="up">▲</button><div><button data-move="left">◀</button><button data-move="down">▼</button><button data-move="right">▶</button></div></div>
+      <div class="touch-actions"><button id="touchDodge">DODGE</button><button id="touchLight">M1</button><button id="touchHeavy">M2</button></div>
+    </div>
+    <div class="bottom-note"><span>BUILD 0.1.4</span><span>TRAINING GROUNDS <i>•</i> ALL SYSTEMS NOMINAL</span></div>
+    <div class="ko-overlay" id="koOverlay"><div class="ko-card"><span class="eyebrow">SESSION INTERRUPTED</span><h1>TAKE A BREATHER.</h1><p>Your health reached zero. Reset to jump back into training.</p><button id="koReset">RESET SESSION <span>↗</span></button></div></div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
