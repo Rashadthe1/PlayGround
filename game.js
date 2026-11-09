@@ -153,6 +153,29 @@
   }
   function drawShadow(pos, width, opacity) { ctx.save();ctx.fillStyle=`rgba(53,66,59,${opacity})`;ctx.beginPath();ctx.ellipse(pos.x,pos.y+4,width,8,0,0,Math.PI*2);ctx.fill();ctx.restore(); }
   function drawBlock(x,y,w,h,r,fill,stroke='#26312d') { ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill();ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke(); }
+  function drawBlock3D(x,y,w,h,r,front,side,topStroke='rgba(255,255,255,.22)', depth=7) {
+    const sideX = x + w + depth;
+    const sideY = y + depth * .7;
+    ctx.beginPath();
+    ctx.moveTo(x + w, y);
+    ctx.lineTo(sideX, sideY);
+    ctx.lineTo(sideX, sideY + h);
+    ctx.lineTo(x + w, y + h);
+    ctx.closePath();
+    ctx.fillStyle = side || front;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(sideX, sideY);
+    ctx.lineTo(sideX - w, sideY);
+    ctx.closePath();
+    ctx.fillStyle = topStroke;
+    ctx.fill();
+    drawBlock(x, y, w, h, r, front, '#2f382f');
+    ctx.fillStyle = 'rgba(255,255,255,.12)';
+    ctx.fillRect(x + 2, y + 2, Math.max(8, w * .3), Math.max(2, h * .14));
+  }
   function drawFighter(entity, isPlayer) {
     const pos=project(entity.x,entity.z);const s=pos.s;const scale=clamp(s/85,.68,1.42);const bob=entity.moving ? Math.sin(game.elapsed*12)*2*scale:Math.sin(game.elapsed*2.7+(isPlayer?0:1))*1.3*scale;
     let bodyH=48*scale, bodyW=36*scale, head=24*scale, legH=27*scale, armW=12*scale, armH=30*scale;
@@ -163,21 +186,21 @@
     ctx.save(); if(entity.hurt>0 && Math.floor(game.elapsed*22)%2===0) ctx.globalAlpha=.6;
     // feet + legs
     const stride=entity.moving?Math.sin(game.elapsed*13)*4*scale:0;
-    drawBlock(pos.x-bodyW*.32,pos.y-legH+stride,bodyW*.27,legH,3*scale,isPlayer?'#313b37':'#67716c');
-    drawBlock(pos.x+bodyW*.05,pos.y-legH-stride,bodyW*.27,legH,3*scale,isPlayer?'#313b37':'#67716c');
-    drawBlock(pos.x-bodyW*.4,pos.y-3*scale,bodyW*.37,7*scale,2*scale,isPlayer?'#232d29':'#59635e');
-    drawBlock(pos.x+bodyW*.01,pos.y-3*scale,bodyW*.37,7*scale,2*scale,isPlayer?'#232d29':'#59635e');
+    drawBlock3D(pos.x-bodyW*.32,pos.y-legH+stride,bodyW*.27,legH,3*scale,isPlayer?'#313b37':'#67716c',isPlayer?'#1d2826':'#4d5953', 'rgba(255,255,255,.14)', 5*scale);
+    drawBlock3D(pos.x+bodyW*.05,pos.y-legH-stride,bodyW*.27,legH,3*scale,isPlayer?'#313b37':'#67716c',isPlayer?'#1d2826':'#4d5953', 'rgba(255,255,255,.14)', 5*scale);
+    drawBlock3D(pos.x-bodyW*.4,pos.y-3*scale,bodyW*.37,7*scale,2*scale,isPlayer?'#232d29':'#59635e',isPlayer?'#181f1d':'#3e4a47', 'rgba(255,255,255,.12)', 4*scale);
+    drawBlock3D(pos.x+bodyW*.01,pos.y-3*scale,bodyW*.37,7*scale,2*scale,isPlayer?'#232d29':'#59635e',isPlayer?'#181f1d':'#3e4a47', 'rgba(255,255,255,.12)', 4*scale);
     // torso, shoulders and angular side seam
     const torsoY=pos.y-legH-bodyH+bob;
-    drawBlock(pos.x-bodyW/2,torsoY,bodyW,bodyH,5*scale,bodyColor,trim);
+    drawBlock3D(pos.x-bodyW/2,torsoY,bodyW,bodyH,5*scale,bodyColor,trim,'rgba(255,255,255,.20)', 7*scale);
     ctx.fillStyle=isPlayer?'rgba(255,255,255,.55)':'rgba(255,255,255,.5)';ctx.fillRect(pos.x-bodyW*.37,torsoY+5*scale,bodyW*.74,2*scale);
     // neck and square head
-    drawBlock(pos.x-5*scale,torsoY-6*scale,10*scale,9*scale,2*scale,skin,'#9b7868');
+    drawBlock3D(pos.x-5*scale,torsoY-6*scale,10*scale,9*scale,2*scale,skin,'#9b7868','rgba(255,255,255,.12)', 4*scale);
     const headY=torsoY-head+3*scale;
-    drawBlock(pos.x-head*.48,headY,head*.96,head*.88,5*scale,isPlayer?'#edc3a6':'#dfc2aa','#9b7868');
+    drawBlock3D(pos.x-head*.48,headY,head*.96,head*.88,5*scale,isPlayer?'#edc3a6':'#dfc2aa','#9b7868','rgba(255,255,255,.18)', 6*scale);
     // hair/cap and friendly face
-    if(isPlayer){drawBlock(pos.x-head*.49,headY-1*scale,head*.98,7*scale,4*scale,'#35403b','#35403b');ctx.fillStyle='#252e2a';ctx.fillRect(pos.x+entity.face*4*scale,headY+11*scale,2.1*scale,2*scale);ctx.fillRect(pos.x-entity.face*6*scale,headY+11*scale,2.1*scale,2*scale);}
-    else {drawBlock(pos.x-head*.5,headY-1*scale,head,7*scale,4*scale,'#929d96','#78837c');ctx.fillStyle='#48534e';ctx.fillRect(pos.x+entity.face*4*scale,headY+12*scale,2*scale,2*scale);ctx.fillRect(pos.x-entity.face*6*scale,headY+12*scale,2*scale,2*scale);}
+    if(isPlayer){drawBlock3D(pos.x-head*.49,headY-1*scale,head*.98,7*scale,4*scale,'#35403b','#35403b','rgba(255,255,255,.12)', 4*scale);ctx.fillStyle='#252e2a';ctx.fillRect(pos.x+entity.face*4*scale,headY+11*scale,2.1*scale,2*scale);ctx.fillRect(pos.x-entity.face*6*scale,headY+11*scale,2.1*scale,2*scale);}
+    else {drawBlock3D(pos.x-head*.5,headY-1*scale,head,7*scale,4*scale,'#929d96','#78837c','rgba(255,255,255,.12)', 4*scale);ctx.fillStyle='#48534e';ctx.fillRect(pos.x+entity.face*4*scale,headY+12*scale,2*scale,2*scale);ctx.fillRect(pos.x-entity.face*6*scale,headY+12*scale,2*scale,2*scale);}
     // arms animate into punch pose
     const active=entity.attack>0; const type=entity.attackType||'';let swing=0;
     if(active){const total=isPlayer?(type==='heavy'||type==='launch'?.48:.32):.58;const phase=1-entity.attack/total;swing=Math.sin(clamp(phase*1.35,0,1)*Math.PI/2);}
@@ -185,8 +208,8 @@
     if(!isPlayer && active)armForward=swing*17*scale*entity.face;
     if(isPlayer && entity.dodge>0 && type==='slip'){armForward=-entity.face*7*scale;}
     const shoulderY=torsoY+9*scale;
-    drawBlock(pos.x- bodyW*.5-armW*.48,shoulderY,armW,armH,5*scale,skin,'#9b7868');
-    drawBlock(pos.x+bodyW*.5-armW*.48+armForward,shoulderY+(active?-swing*7*scale:0),armW,armH,5*scale,skin,'#9b7868');
+    drawBlock3D(pos.x- bodyW*.5-armW*.48,shoulderY,armW,armH,5*scale,skin,'#9b7868','rgba(255,255,255,.10)', 4*scale);
+    drawBlock3D(pos.x+bodyW*.5-armW*.48+armForward,shoulderY+(active?-swing*7*scale:0),armW,armH,5*scale,skin,'#9b7868','rgba(255,255,255,.10)', 4*scale);
     if(active){ctx.save();ctx.globalAlpha=.3*swing;ctx.strokeStyle=isPlayer?'#a6d34c':'#db7d6e';ctx.lineWidth=9*scale;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(pos.x+entity.face*bodyW*.55,shoulderY+armH*.55);ctx.lineTo(pos.x+entity.face*(bodyW*.55+armForward*.85),shoulderY+armH*.5);ctx.stroke();ctx.restore();}
     if(isPlayer){rounded(pos.x-29*scale,top-18*scale,58*scale,14*scale,7*scale,'rgba(255,255,255,.82)','rgba(37,49,46,.08)');ctx.fillStyle='#53605a';ctx.font=`500 ${8*scale}px DM Mono, monospace`;ctx.textAlign='center';ctx.fillText('YOU',pos.x,top-8*scale);}
     else {rounded(pos.x-39*scale,top-18*scale,78*scale,14*scale,7*scale,'rgba(255,255,255,.82)','rgba(37,49,46,.08)');ctx.fillStyle='#7d8882';ctx.font=`500 ${8*scale}px DM Mono, monospace`;ctx.textAlign='center';ctx.fillText('PRACTICE DUMMY',pos.x,top-8*scale);}
