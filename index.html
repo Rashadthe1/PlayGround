@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101a19" />
+  <title>EVOLVE — Planetary Observatory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
+  </script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Evolve observatory home"><span class="brand-mark"><i></i><i></i><i></i></span><span>EVOLVE<span class="brand-dot">.</span></span></a>
+      <div class="world-title"><span class="live-pip"></span><div><strong>KEPLER-186f</strong><small>BIOSPHERE 01 <b>·</b> DAY <span id="header-day">128</span></small></div></div>
+      <div class="top-actions"><span class="save-state"><span class="save-dot"></span> AUTOSAVED</span><button class="icon-button" id="sound-toggle" aria-label="Toggle ambient sound" title="Sound toggle">♫</button><button class="avatar" title="Overseer profile">O</button></div>
+    </header>
+
+    <section class="workspace">
+      <aside class="left-rail">
+        <div class="rail-label">OBSERVATORY</div>
+        <button class="rail-button active" data-mode="overview" title="Overview"><span>◉</span><small>Overview</small></button>
+        <button class="rail-button" data-mode="species" title="Species"><span>⌘</span><small>Species</small><em>3</em></button>
+        <button class="rail-button" data-mode="biome" title="Biome"><span>◈</span><small>Biome</small></button>
+        <div class="rail-spacer"></div>
+        <button class="rail-button" id="help-button" title="How to play"><span>?</span><small>Guide</small></button>
+        <div class="rail-bottom"><span class="connection"></span><small>SIM<br>ONLINE</small></div>
+      </aside>
+
+      <section class="world-view" aria-label="3D world observatory">
+        <div id="world-canvas"></div>
+        <div class="view-vignette"></div>
+        <div class="world-hud">
+          <div class="world-caption"><span class="eyebrow">LIVE WORLD FEED</span><h1>A world in<br><em>the making.</em></h1><p>Your presence is quiet. Your influence isn't.</p></div>
+          <div class="view-tools"><button class="tool-button active" id="camera-button" title="Toggle camera mode">⌖ <span>ORBIT</span></button><button class="tool-button" id="focus-button" title="Center the world">◎</button><button class="tool-button" id="fullscreen-button" title="Toggle fullscreen">⛶</button></div>
+          <div class="world-badges"><span class="badge"><i class="badge-pulse"></i> ECOSYSTEM STABLE</span><span class="badge muted-badge"><span id="weather-icon">☀</span> <span id="weather-label">CLEAR</span></span></div>
+          <div class="world-hint" id="world-hint">DRAG TO ORBIT <span>·</span> SCROLL TO ZOOM <span>·</span> CLICK TO OBSERVE</div>
+          <div class="canvas-tooltip" id="canvas-tooltip"></div>
+        </div>
+      </section>
+
+      <aside class="inspector">
+        <div class="inspector-head"><div><span class="eyebrow">WORLD SNAPSHOT</span><h2>At a glance</h2></div><button class="more-button" aria-label="More options">···</button></div>
+        <div class="stats-grid">
+          <div class="stat-card"><span class="stat-icon green">⌁</span><span class="stat-label">POPULATION</span><strong id="population-stat">248</strong><small><b class="positive">↗ 12%</b> this cycle</small></div>
+          <div class="stat-card"><span class="stat-icon amber">◉</span><span class="stat-label">BIODIVERSITY</span><strong><span id="biodiversity-stat">76</span><i>/100</i></strong><small><b class="positive">+3</b> this cycle</small></div>
+          <div class="stat-card wide"><span class="stat-icon blue">⌁</span><span class="stat-label">PLANET HEALTH</span><strong id="health-stat">Thriving<span class="health-spark">▁▂▂▄▃▅▆▅▇</span></strong><div class="health-track"><i id="health-fill"></i></div></div>
+        </div>
+        <div class="section-heading"><h3>Living species <span id="species-count">03</span></h3><button class="text-action" id="edit-species-shortcut">EDIT <span>↗</span></button></div>
+        <div class="species-list" id="species-list"></div>
+        <div class="selected-card" id="selected-card">
+          <div class="selected-top"><div class="selected-icon" id="selected-icon">◒</div><div><span class="eyebrow">SELECTED SPECIES</span><h3 id="selected-name">Mossbacks</h3></div><button class="tiny-edit" id="edit-selected" title="Edit species">✎</button></div>
+          <p id="selected-description">Slow-growing grazers that keep the forest floor clear.</p>
+          <div class="selected-metrics"><div><span>POPULATION</span><strong id="selected-pop">124</strong></div><div><span>AVG. LIFESPAN</span><strong id="selected-life">18 <i>yrs</i></strong></div><div><span>ADAPTATION</span><strong id="selected-adapt">84<i>%</i></strong></div></div>
+          <button class="observe-button" id="observe-selected">◎ <span>FOLLOW IN WORLD</span> <b>↗</b></button>
+        </div>
+        <div class="events-section"><div class="section-heading"><h3>Field notes</h3><span class="event-live"><i></i> LIVE</span></div><div class="event-list" id="event-list"></div></div>
+        <div class="inspector-footer"><span>SIMULATION VERSION 1.0</span><span>● ALL SYSTEMS NORMAL</span></div>
+      </aside>
+    </section>
+
+    <footer class="timeline">
+      <div class="timeline-left"><button class="play-button" id="play-button" aria-label="Pause simulation">Ⅱ</button><div class="time-readout"><strong id="time-label">DAY 128</strong><span id="time-sub">YEAR 04 <b>·</b> SPRING</span></div><div class="timeline-divider"></div><button class="speed-button" id="speed-button"><span>×</span><b>1</b><small> SPEED</small><i>⌄</i></button></div>
+      <div class="timeline-center"><div class="timeline-top"><span>EVOLUTION TIMELINE</span><span id="timeline-date">APR 18, YEAR 04</span></div><div class="timeline-track-wrap"><div class="timeline-track"><div class="timeline-progress" id="timeline-progress"></div><div class="timeline-marker" id="timeline-marker"><i></i><span>NOW</span></div><button class="milestone" style="left:18%" title="First sprinter mutation"><i></i><span>DAY 42</span></button><button class="milestone" style="left:48%" title="Canopy bloom"><i></i><span>DAY 89</span></button><button class="milestone active" style="left:76%" title="Current day"><i></i><span>DAY 128</span></button></div></div></div>
+      <div class="timeline-right"><button class="god-button" id="intervene-button"><span>✦</span> INTERVENE <b>⌄</b></button><button class="icon-button timeline-settings" id="settings-button" title="Settings">⚙</button></div>
+    </footer>
+  </main>
+
+  <div class="modal-backdrop" id="modal-backdrop" hidden><section class="modal" id="modal-content" role="dialog" aria-modal="true"></section></div>
+  <div class="toast" id="toast" role="status"></div>
+  <script type="module" src="game.js"></script>
+</body>
+</html>
