@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#07130f" />
+<title>Creature World — Procedural Evolution</title>
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<div id="app">
+  <canvas id="game-canvas"></canvas>
+  <div id="world-vignette"></div>
+  <div id="damage-vignette"></div>
+  <div id="heal-vignette"></div>
+
+  <!-- ============ LOADING ============ -->
+  <div id="loading" class="screen">
+    <div class="loading-inner">
+      <div class="loading-mark">◈</div>
+      <div class="loading-title">SEEDING A WORLD</div>
+      <div class="loading-bar"><span></span></div>
+      <div id="loading-text">Shaping continents…</div>
+    </div>
+  </div>
+
+  <!-- ============ TITLE ============ -->
+  <div id="title-screen" class="screen hidden">
+    <div class="title-gradient"></div>
+    <div class="title-content">
+      <div class="eyebrow"><i></i> PROCEDURAL EVOLUTION SURVIVAL <i></i></div>
+      <h1 class="logo">CREATURE<span>WORLD</span></h1>
+      <p class="tagline">Begin as a single cell. End as an apex species.<br />Every creature is born, fears, hunts, breeds and evolves.</p>
+      <div class="title-actions">
+        <button id="btn-start" class="btn btn-primary btn-xl">Start Game</button>
+        <button id="btn-continue" class="btn btn-ghost btn-xl hidden">Continue</button>
+        <button id="btn-cell-start" class="btn btn-ghost btn-xl">Cell Stage</button>
+        <button id="btn-title-help" class="btn btn-quiet btn-xl">How to Play</button>
+      </div>
+      <div class="title-meta">
+        <span>GENESIS SEED <b id="title-seed">—</b></span>
+        <span class="dot">·</span>
+        <span>WORLD <b>MYOCENE EPOCH</b></span>
+        <span class="dot">·</span>
+        <span>BUILD <b>0.9</b></span>
+      </div>
+    </div>
+    <div class="title-footer">
+      <span>◈ 8 living species</span>
+      <span>◈ 7 biomes</span>
+      <span>◈ infinite deep time</span>
+    </div>
+  </div>
+
+  <!-- ============ WORLD HUD ============ -->
+  <div id="hud" class="hidden">
+    <div class="hud-top">
+      <div class="species-card glass">
+        <div class="portrait-wrap"><canvas id="hud-portrait" width="112" height="112"></canvas><span id="hud-stage" class="stage-badge">CREATURE</span></div>
+        <div class="species-meta">
+          <div class="species-eyebrow">YOUR LINEAGE</div>
+          <div class="species-name" id="hud-species">Aetherling</div>
+          <div class="species-sub" id="hud-species-sub">Homo Aetheris · Gen 1</div>
+          <div class="dna-row"><span class="dna-icon">▰</span> <b id="hud-dna">0</b> DNA <span id="hud-pop" class="pop">pop 1</span></div>
+        </div>
+      </div>
+      <div class="objective glass">
+        <div class="objective-label">SURVIVAL OBJECTIVE</div>
+        <div class="objective-text" id="objective-text">Drink water, feed, and build DNA.</div>
+        <div class="objective-progress"><span id="objective-bar"></span></div>
+      </div>
+      <div class="environment glass">
+        <div class="env-time">
+          <div class="env-clock" id="env-clock">06:40</div>
+          <div class="env-day" id="env-day">DAY 1 · SPRING</div>
+        </div>
+        <div class="env-divider"></div>
+        <div class="env-detail">
+          <div id="env-weather">Clear skies</div>
+          <div id="env-year">Year 1.00M</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vitals glass">
+      <div class="vital" data-vital="health"><div class="vital-head"><span>♥ HEALTH</span><b id="val-health">100</b></div><div class="bar"><span id="bar-health"></span></div></div>
+      <div class="vital" data-vital="hunger"><div class="vital-head"><span>◒ HUNGER</span><b id="val-hunger">20</b></div><div class="bar"><span id="bar-hunger"></span></div></div>
+      <div class="vital" data-vital="thirst"><div class="vital-head"><span>◓ THIRST</span><b id="val-thirst">18</b></div><div class="bar"><span id="bar-thirst"></span></div></div>
+      <div class="vital" data-vital="stamina"><div class="vital-head"><span>ϟ STAMINA</span><b id="val-stamina">100</b></div><div class="bar"><span id="bar-stamina"></span></div></div>
+      <div class="vital-mini">
+        <span id="age-label">2.1 yrs</span><span id="fear-label">THREAT LOW</span>
+      </div>
+      <div id="injury-chips" class="injury-chips"></div>
+      <div class="hazard" id="hazard-note"></div>
+    </div>
+
+    <div class="top-actions">
+      <button class="icon-btn" data-menu="codex" title="Species Encyclopedia"><span>◫</span>CODEX</button>
+      <button class="icon-btn" data-menu="editor" title="Creature Editor"><span>✣</span>EVOLVE</button>
+      <button class="icon-btn" data-menu="family" title="Family Tree"><span>⑂</span>FAMILY</button>
+      <button class="icon-btn" data-menu="ecosystem" title="Ecosystem"><span>❖</span>WORLD</button>
+      <button class="icon-btn" data-menu="inventory" title="Inventory"><span>▤</span>BAG</button>
+      <button class="icon-btn" data-menu="menu" title="Menu"><span>☰</span>MENU</button>
+    </div>
+
+    <div class="target-panel glass hidden" id="target-panel">
+      <div class="target-head"><span id="target-name">—</span><button id="target-close">×</button></div>
+      <div class="target-sub" id="target-species">—</div>
+      <div class="target-fear" id="target-fear">CALM</div>
+      <div class="target-bars">
+        <div><span>HP</span><div class="mini-bar"><i id="target-hp"></i></div></div>
+        <div><span>FEA</span><div class="mini-bar fear"><i id="target-fearbar"></i></div></div>
+      </div>
+      <div class="target-meta" id="target-meta">—</div>
+      <div class="target-actions"><button id="target-attack" class="mini-btn danger">Bite</button><button id="target-inspect" class="mini-btn">Inspect</button></div>
+    </div>
+
+    <div class="minimap-wrap glass">
+      <canvas id="minimap" width="320" height="320"></canvas>
+      <div class="minimap-ring"></div>
+      <div class="compass">N</div>
+      <div class="minimap-label" id="minimap-label">GRASSLAND</div>
+    </div>
+
+    <div id="nearby-tags"></div>
+
+    <div class="context-prompt hidden" id="context-prompt"><span class="key">E</span><span id="context-label">Drink water</span></div>
+
+    <div class="action-bar">
+      <div class="action" data-action="attack"><div class="action-key">F</div><div class="action-icon">✦</div><div class="action-name">Bite</div><div class="cooldown" id="cd-attack"></div></div>
+      <div class="action" data-action="roar"><div class="action-key">Q</div><div class="action-icon">◉</div><div class="action-name">Roar</div><div class="cooldown" id="cd-roar"></div></div>
+      <div class="action" data-action="interact"><div class="action-key">E</div><div class="action-icon">☘</div><div class="action-name">Use</div><div class="cooldown" id="cd-interact"></div></div>
+      <div class="action" data-action="rest"><div class="action-key">R</div><div class="action-icon">☾</div><div class="action-name">Rest</div><div class="cooldown"></div></div>
+      <div class="action" data-action="jump"><div class="action-key">SPC</div><div class="action-icon">⇧</div><div class="action-name">Jump</div><div class="cooldown"></div></div>
+    </div>
+
+    <div class="control-hint"><b>WASD</b> move · <b>drag</b> look · <b>shift</b> sprint · <b>E</b> interact · <b>F</b> bite · <b>Q</b> roar · <b>R</b> rest</div>
+
+    <div id="toasts"></div>
+    <div id="damage-numbers"></div>
+    <div id="selection-reticle" class="hidden"></div>
+
+    <div id="joystick" class="hidden"><div id="joystick-knob"></div></div>
+    <div class="mobile-actions">
+      <button data-action="attack" class="mob-btn">✦</button>
+      <button data-action="roar" class="mob-btn">◉</button>
+      <button data-action="interact" class="mob-btn">☘</button>
+      <button data-action="rest" class="mob-btn">☾</button>
+      <button data-action="jump" class="mob-btn">⇧</button>
+    </div>
+  </div>
+
+  <!-- ============ CELL HUD ============ -->
+  <div id="cell-hud" class="hidden">
+    <div class="cell-top glass">
+      <div class="cell-stage">STAGE I · <b>CELL</b></div>
+      <div class="cell-name">Primordial Aetheris</div>
+      <div class="cell-sub">A microscopic filter-feeder in the warm shallows</div>
+    </div>
+    <div class="cell-stats glass">
+      <div class="cell-ring-wrap">
+        <svg viewBox="0 0 100 100" class="cell-ring"><circle cx="50" cy="50" r="42" class="ring-bg"/><circle cx="50" cy="50" r="42" class="ring-fill" id="cell-ring"/></svg>
+        <div class="cell-ring-text"><b id="cell-biomass">0</b><span>/14</span></div>
+      </div>
+      <div class="cell-details">
+        <div class="cell-row"><span>HEALTH</span><div class="mini-bar"><i id="cell-health"></i></div></div>
+        <div class="cell-row"><span>DNA</span><b id="cell-dna">0</b></div>
+        <div class="cell-row"><span>CONSUMED</span><b id="cell-eaten">0</b></div>
+      </div>
+    </div>
+    <div class="cell-objective glass" id="cell-objective">
+      <span class="eyebrow-mini">OBJECTIVE</span>
+      <div>Feed on plankton, avoid larger cells, and grow <b>14 biomass</b> to crawl onto land.</div>
+      <div class="cell-tip">WASD / joystick to swim · SPACE to dash</div>
+    </div>
+    <button id="btn-evolve-cell" class="btn btn-primary evolve-btn hidden">Evolve to Creature Stage →</button>
+    <div class="cell-bottom-hint">EAT THE GLOWING PLANKTON <span>·</span> PREDATORS HUNT SMALLER CELLS</div>
+    <button id="btn-cell-exit" class="cell-exit">Return to World</button>
+  </div>
+
+  <!-- ============ MODAL ============ -->
+  <div id="modal-overlay" class="hidden">
+    <div class="modal-panel" id="modal-panel">
+      <div class="modal-head">
+        <div>
+          <div class="modal-kicker" id="modal-kicker">ARCHIVE</div>
+          <h2 id="modal-title">Species Codex</h2>
+        </div>
+        <button id="modal-close" aria-label="Close">×</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ============ DEATH ============ -->
+  <div id="death-screen" class="hidden">
+    <div class="death-inner">
+      <div class="death-kicker">YOUR LINEAGE ENDS</div>
+      <h2>Consumed by the wild</h2>
+      <p id="death-text">Your body returns to the ecosystem. Your offspring may carry your genes further.</p>
+      <button id="btn-respawn" class="btn btn-primary">Awaken at your nest</button>
+    </div>
+  </div>
+
+  <div id="screen-flash"></div>
+</div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./jsm/"
+  }
+}
+</script>
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
