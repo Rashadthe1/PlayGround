@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101a17" />
+  <title>Creature World — Wild Origins</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="game-shell">
+    <canvas id="world"></canvas>
+    <div class="world-vignette"></div>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Creature World home"><span class="brand-mark">✳</span><span>CREATURE<span class="brand-light">WORLD</span></span></a>
+      <div class="world-title"><span class="live-dot"></span><span id="biome-label">THE VERDANT REACH</span><i>•</i><span id="clock-label">DAY 04 · 08:42</span></div>
+      <div class="top-actions"><button class="icon-btn" id="sound-btn" title="Toggle sound">♫</button><button class="icon-btn" id="pause-btn" title="Pause simulation">Ⅱ</button><button class="avatar-btn">✦</button></div>
+    </header>
+    <section class="left-rail">
+      <div class="stage-card"><div class="stage-icon" id="stage-icon">◉</div><div><div class="eyebrow">YOUR JOURNEY</div><strong id="stage-name">CELL STAGE</strong></div><div class="stage-step">01 <span>/ 02</span></div></div>
+      <div class="evo-card"><div class="evo-heading"><span>Evolution progress</span><b id="evo-pct">23%</b></div><div class="progress-track"><div id="evo-bar" style="width:23%"></div></div><div class="evo-caption"><span>Become a land dweller</span><span>✦ <b id="dna-count">35</b></span></div></div>
+      <div class="stat-stack">
+        <div class="stat-card"><span class="stat-icon hunger">◒</span><div class="stat-copy"><div class="stat-label">HUNGER <b id="hunger-val">28%</b></div><div class="meter"><i id="hunger-meter" class="meter-fill hunger-fill" style="width:72%"></i></div></div><span class="stat-note" id="hunger-note">sated</span></div>
+        <div class="stat-card"><span class="stat-icon water">◉</span><div class="stat-copy"><div class="stat-label">THIRST <b id="thirst-val">16%</b></div><div class="meter"><i id="thirst-meter" class="meter-fill water-fill" style="width:84%"></i></div></div><span class="stat-note">hydrated</span></div>
+        <div class="stat-card"><span class="stat-icon health">✚</span><div class="stat-copy"><div class="stat-label">HEALTH <b id="health-val">100%</b></div><div class="meter"><i id="health-meter" class="meter-fill health-fill" style="width:100%"></i></div></div><span class="stat-note">healthy</span></div>
+      </div>
+      <div class="nearby-card"><div class="section-overline">NEARBY LIFE <span class="pulse-dot"></span></div><div class="life-row"><span class="life-dot herb"></span><span>Glimmer grazer</span><b id="grazer-count">12</b></div><div class="life-row"><span class="life-dot pred"></span><span>Thornback hunter</span><b id="hunter-count">3</b></div><div class="life-row"><span class="life-dot plant"></span><span>Sunspore bloom</span><b>∞</b></div><div class="territory"><span>◉</span> You are in <b>safe waters</b></div></div>
+    </section>
+    <div class="objective-toast" id="objective-toast"><div class="objective-icon">✧</div><div><div class="eyebrow">FIELD NOTE <span>NEW</span></div><strong id="objective-title">A world of possibility</strong><p id="objective-text">Explore the shallows and feed on drifting plankton.</p></div><button id="dismiss-objective">×</button></div>
+    <div class="interaction-hint" id="interaction-hint"><span>F</span> <b>Feed</b><i>near a food source</i></div>
+    <section class="bottom-left"><div class="weather"><span class="weather-icon">☀</span><div><b id="weather-name">CLEAR SKIES</b><small>Season of Bloom · 22°C</small></div></div><div class="time-control"><button id="time-toggle">▶</button><span>TIME FLOW</span><div class="time-dots"><i class="active"></i><i></i><i></i></div></div></section>
+    <section class="bottom-center"><div class="control-pill"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><i>move</i><b>·</b><span><kbd>SPACE</kbd></span><i>dash</i><b>·</b><span><kbd>F</kbd></span><i>interact</i></div></section>
+    <section class="right-rail"><button class="rail-button active" data-panel="world"><span>⌖</span><small>WORLD</small></button><button class="rail-button" data-panel="species"><span>◉</span><small>SPECIES</small></button><button class="rail-button" data-panel="evolution"><span>✧</span><small>EVOLVE</small></button><button class="rail-button" data-panel="family"><span>⌘</span><small>LINEAGE</small></button><div class="rail-divider"></div><button class="rail-button" id="editor-open"><span>✚</span><small>EDITOR</small></button></section>
+    <div class="toast" id="toast"></div>
+    <div class="panel-backdrop" id="panel-backdrop"></div>
+    <aside class="side-panel" id="side-panel"><button class="close-panel" id="panel-close">×</button><div id="panel-content"></div></aside>
+    <div class="editor-modal" id="editor-modal"><div class="editor-window"><div class="editor-head"><div><div class="eyebrow">YOUR GENOME · CREATURE STAGE</div><h2>Shape your future</h2></div><button id="editor-close" class="close-panel">×</button></div><div class="editor-layout"><div class="editor-preview"><div class="preview-orbit orbit-a"></div><div class="preview-orbit orbit-b"></div><div class="preview-creature" id="preview-creature"><div class="preview-body"></div><div class="preview-head"></div><div class="preview-eye"></div><div class="preview-tail"></div><div class="preview-leg leg-one"></div><div class="preview-leg leg-two"></div></div><span class="preview-label">ANCESTOR · GEN 01</span></div><div class="editor-controls"><div class="editor-tabs"><button class="selected">BODY</button><button>FEATURES</button><button>COLOR</button></div><div class="slider-row"><div><b>Body size</b><small>Growth & strength</small></div><input id="body-size" type="range" min="0" max="100" value="48"></div><div class="slider-row"><div><b>Leg length</b><small>Speed & agility</small></div><input id="leg-size" type="range" min="0" max="100" value="55"></div><div class="slider-row"><div><b>Tail length</b><small>Balance & swimming</small></div><input id="tail-size" type="range" min="0" max="100" value="60"></div><div class="feature-picker"><span>ADAPTATIONS</span><button class="trait selected" data-trait="spines">✦ <b>Spines</b><small>Defense</small></button><button class="trait" data-trait="wings">⌁ <b>Glider fins</b><small>Mobility</small></button><button class="trait" data-trait="fangs">⌑ <b>Hunter jaws</b><small>Attack</small></button></div><div class="color-row"><span>SKIN PIGMENT</span><button class="swatch selected" data-color="#df8262" style="--swatch:#df8262"></button><button class="swatch" data-color="#8eb68c" style="--swatch:#8eb68c"></button><button class="swatch" data-color="#e4bb68" style="--swatch:#e4bb68"></button><button class="swatch" data-color="#8b9fc7" style="--swatch:#8b9fc7"></button></div><button class="primary-btn" id="apply-evolution">✧ &nbsp; Evolve · 80 DNA</button><p class="editor-footnote">Every adaptation changes your body, abilities, and how you move.</p></div></div></div></div>
+    <div class="mobile-controls"><div class="dpad"><button data-dir="up">▲</button><div><button data-dir="left">◀</button><button data-dir="down">▼</button><button data-dir="right">▶</button></div></div><div class="mobile-actions"><button id="mobile-feed">FEED</button><button id="mobile-dash">DASH</button></div></div>
+  </main>
+  <script type="module" src="game.js"></script>
+</body>
+</html>
